@@ -4,9 +4,11 @@ import Link from "next/link";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { dictionary } from "@/i18n/dictionary";
 import { useLanguage } from "@/i18n/LanguageProvider";
+import { useAuth } from "@/auth/AuthProvider";
 
 export default function SiteHeader() {
   const { language } = useLanguage();
+  const { currentUser, logout } = useAuth();
   const t = dictionary[language].nav;
 
   return (
@@ -18,7 +20,24 @@ export default function SiteHeader() {
         <nav className="flex items-center gap-4 text-sm text-zinc-300">
           <Link href="/about">{t.about}</Link>
           <Link href="/apply">{t.apply}</Link>
-          <Link href="/account">{t.account}</Link>
+          {currentUser ? (
+            <>
+              <Link href="/account" className="font-medium text-zinc-100">
+                Личный кабинет
+              </Link>
+              <button
+                type="button"
+                onClick={logout}
+                className="text-xs text-zinc-400 transition-colors hover:text-emerald-300"
+              >
+                Выйти
+              </button>
+            </>
+          ) : (
+            <Link href="/auth/login" className="font-medium text-zinc-100">
+              Войти
+            </Link>
+          )}
           <LanguageSwitcher />
         </nav>
       </div>
